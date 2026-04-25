@@ -1,0 +1,657 @@
+/* The Martinsburgers — Sketchy notebook TD design system */
+
+:root {
+  --paper: #FBF6E9;
+  --paper-2: #F4ECD0;
+  --paper-3: #E8DCB0;
+  --ink: #1A1A1A;
+  --ink-2: #3a3835;
+  --ink-soft: rgba(26,26,26,.55);
+  --ink-faint: rgba(26,26,26,.18);
+
+  --red: #E63946;
+  --yellow: #FFD23F;
+  --blue: #3D5A80;
+  --sky: #6FA8DC;
+  --grass: #52B788;
+  --pink: #FF3D7F;
+  --purple: #7B5EA7;
+  --orange: #F77F00;
+
+  --rule: rgba(61, 90, 128, 0.22);
+  --margin: rgba(230, 57, 70, 0.55);
+
+  --font-hand: 'Caveat', 'Patrick Hand', cursive;
+  --font-body: 'Kalam', 'Patrick Hand', system-ui;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  width: 100%; height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  overflow: hidden;
+}
+
+#root { width: 100%; height: 100%; }
+
+/* PAPER TEXTURE — used as backdrop */
+.paper {
+  background-color: var(--paper);
+  background-image:
+    /* horizontal rule lines (notebook) */
+    repeating-linear-gradient(0deg, transparent 0 31px, var(--rule) 31px 31.6px),
+    /* margin line */
+    linear-gradient(90deg, transparent 0 72px, var(--margin) 72px 72.5px, transparent 72.5px),
+    /* paper noise */
+    radial-gradient(circle at 20% 30%, rgba(0,0,0,0.025) 0 1px, transparent 2px),
+    radial-gradient(circle at 70% 80%, rgba(0,0,0,0.02) 0 1px, transparent 2px);
+  background-size: auto, auto, 7px 7px, 11px 11px;
+}
+
+.paper-plain {
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(0,0,0,0.03) 0 1px, transparent 2px),
+    radial-gradient(circle at 70% 80%, rgba(0,0,0,0.025) 0 1px, transparent 2px),
+    radial-gradient(circle at 40% 60%, rgba(0,0,0,0.02) 0 1px, transparent 2px);
+  background-size: 6px 6px, 9px 9px, 13px 13px;
+}
+
+/* WOBBLY BORDER UTILS — using svg filter for sketchy feel */
+.sketch-frame {
+  position: relative;
+  border: 2.5px solid var(--ink);
+  border-radius: 6px;
+  filter: url(#wobble);
+  background: var(--paper);
+}
+
+/* Sketchy box with double-line border */
+.sketch-box {
+  position: relative;
+  background: var(--paper);
+  border: 2.5px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.sketch-box::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid var(--ink);
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.sketch-box-tight {
+  position: relative;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 5px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.btn {
+  font-family: var(--font-hand);
+  font-size: 28px;
+  font-weight: 700;
+  background: var(--paper);
+  color: var(--ink);
+  border: 2.5px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 22px 4px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform 0.05s, box-shadow 0.05s;
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  line-height: 1;
+}
+.btn:hover {
+  background: var(--yellow);
+}
+.btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+.btn--red { background: var(--red); color: var(--paper); }
+.btn--red:hover { background: #ff4d5a; }
+.btn--yellow { background: var(--yellow); }
+.btn--blue { background: var(--blue); color: var(--paper); }
+.btn--blue:hover { background: #4d6e94; }
+.btn--green { background: var(--grass); color: var(--paper); }
+.btn--green:hover { background: #67c79a; }
+.btn--pink { background: var(--pink); color: var(--paper); }
+.btn--pink:hover { background: #ff5b95; }
+.btn--ghost { background: transparent; box-shadow: 2px 2px 0 var(--ink); }
+.btn--sm { font-size: 18px; padding: 5px 12px 3px; box-shadow: 2px 2px 0 var(--ink); }
+
+.btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  background: var(--paper-3);
+  color: var(--ink-soft);
+}
+.btn:disabled:hover { background: var(--paper-3); }
+
+/* TYPE */
+.h-display {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 96px;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+}
+.h-title {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 56px;
+  line-height: 1;
+}
+.h-subtitle {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 36px;
+  line-height: 1.05;
+}
+.h-section {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.t-body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.45;
+}
+.t-mono {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: -0.02em;
+}
+.t-stat {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 22px;
+}
+
+/* TAGS */
+.tag {
+  display: inline-block;
+  font-family: var(--font-hand);
+  font-size: 18px;
+  font-weight: 700;
+  padding: 1px 10px 0;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  line-height: 1.4;
+}
+.tag--red { background: var(--red); color: var(--paper); }
+.tag--yellow { background: var(--yellow); }
+.tag--blue { background: var(--blue); color: var(--paper); }
+.tag--grass { background: var(--grass); color: var(--paper); }
+.tag--pink { background: var(--pink); color: var(--paper); }
+.tag--purple { background: var(--purple); color: var(--paper); }
+
+/* STAMP — for "WAVE 1!" etc */
+.stamp {
+  display: inline-block;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 32px;
+  border: 4px double var(--red);
+  color: var(--red);
+  padding: 4px 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transform: rotate(-4deg);
+  background: rgba(251, 246, 233, 0.6);
+}
+
+/* HATCHING — for shadows on iso tiles, etc */
+.hatch {
+  background-image: repeating-linear-gradient(
+    45deg, var(--ink) 0 1px, transparent 1px 4px
+  );
+}
+.hatch-soft {
+  background-image: repeating-linear-gradient(
+    45deg, rgba(26,26,26,0.35) 0 1px, transparent 1px 5px
+  );
+}
+.hatch-cross {
+  background-image:
+    repeating-linear-gradient(45deg, rgba(26,26,26,0.4) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(-45deg, rgba(26,26,26,0.4) 0 1px, transparent 1px 5px);
+}
+
+/* HEALTH BAR — sketchy */
+.hp-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--paper-2);
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.hp-bar > .hp-fill {
+  height: 100%;
+  background: var(--grass);
+  transition: width 0.25s ease;
+}
+.hp-bar.danger > .hp-fill { background: var(--red); }
+
+/* SCREEN STAGE — letterboxed game frame */
+.stage {
+  width: 100%;
+  height: 100%;
+  background: var(--paper);
+}
+.stage-canvas {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+/* iso tile (parallelogram) — used in maps */
+.iso-tile {
+  position: absolute;
+  width: 64px;
+  height: 32px;
+  transform-origin: center center;
+}
+
+/* shake for damage */
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 1px); }
+  75% { transform: translate(2px, -1px); }
+}
+.shake { animation: shake 0.18s ease-in-out; }
+
+@keyframes flash-red {
+  0%, 100% { filter: none; }
+  50% { filter: drop-shadow(0 0 6px var(--red)) brightness(1.2); }
+}
+.flash { animation: flash-red 0.18s ease-in-out; }
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+}
+.pulse { animation: pulse 1.6s ease-in-out infinite; }
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+.wobble { animation: wobble 2.4s ease-in-out infinite; }
+
+@keyframes sketch-in {
+  from { stroke-dashoffset: 200; opacity: 0; }
+  to { stroke-dashoffset: 0; opacity: 1; }
+}
+
+@keyframes coin-flip {
+  0% { transform: rotateY(0); }
+  100% { transform: rotateY(360deg); }
+}
+
+/* doodle helpers — coffee stains, ink blots, etc */
+.coffee-stain {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 30% 30%, transparent 30%, rgba(120, 70, 30, 0.18) 60%, rgba(120, 70, 30, 0.32) 70%, transparent 75%);
+  pointer-events: none;
+}
+.ink-blot {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(26,26,26,0.18) 0 30%, transparent 65%);
+  pointer-events: none;
+}
+
+/* underlines */
+.underline-wob {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8'><path d='M2 4 Q 25 1 50 4 T 98 4' stroke='%23E63946' stroke-width='2.5' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-size: 100% 8px;
+  background-position: 0 100%;
+  padding-bottom: 6px;
+}
+
+/* annotations */
+.annotation {
+  font-family: var(--font-hand);
+  font-size: 22px;
+  color: var(--red);
+  position: absolute;
+  pointer-events: none;
+  transform: rotate(-3deg);
+}
+.annotation--blue { color: var(--blue); }
+
+/* arrow doodle (used inline as bg) */
+.arrow-bend {
+  width: 60px; height: 30px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'><path d='M2 15 Q 15 2 30 12 T 55 18 M 50 12 L 56 18 L 49 22' stroke='%23E63946' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+}
+
+/* enemies/defenders — chibi sprite shells */
+.sprite {
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  transform-origin: bottom center;
+  filter: drop-shadow(1px 2px 0 rgba(0,0,0,0.25));
+}
+
+.sprite-shadow {
+  position: absolute;
+  width: 28px; height: 8px;
+  background: rgba(0,0,0,0.22);
+  border-radius: 50%;
+  filter: blur(2px);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* placement preview */
+.place-ghost {
+  position: absolute;
+  width: 60px; height: 60px;
+  border: 2.5px dashed var(--blue);
+  border-radius: 50%;
+  background: rgba(61, 90, 128, 0.12);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.place-ghost.bad {
+  border-color: var(--red);
+  background: rgba(230, 57, 70, 0.15);
+}
+
+/* range circle when selecting tower */
+.range-ring {
+  position: absolute;
+  border: 2px dashed var(--blue);
+  border-radius: 50%;
+  background: rgba(61, 90, 128, 0.06);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* projectile trail */
+.projectile {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  font-size: 22px;
+  filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.35));
+  animation: proj-spin 0.4s linear infinite;
+}
+@keyframes proj-spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+.proj-trail {
+  position: absolute;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(230,57,70,0.55) 60%, rgba(230,57,70,0.95));
+  border-radius: 2px;
+  transform-origin: left center;
+  pointer-events: none;
+  filter: blur(0.5px);
+}
+
+/* muzzle flash — short pulse when a defender fires */
+.muzzle-flash {
+  position: absolute;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(rgba(255,210,63,0.95), rgba(255,210,63,0.5) 40%, transparent 70%);
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: none;
+  animation: mflash 0.3s ease-out forwards;
+}
+@keyframes mflash {
+  from { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+  to   { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+}
+
+/* always-on faint range hint under each placed defender */
+.range-hint {
+  position: absolute;
+  border: 1.5px dashed rgba(26,26,26,0.18);
+  border-radius: 50%;
+  background: rgba(61, 90, 128, 0.04);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.range-hint.support { border-color: rgba(255,210,63,0.55); background: rgba(255,210,63,0.08); }
+.range-hint.cc     { border-color: rgba(123,94,167,0.45); background: rgba(123,94,167,0.06); }
+.range-hint.ranged { border-color: rgba(61,90,128,0.40); }
+.range-hint.melee  { border-color: rgba(230,57,70,0.40); background: rgba(230,57,70,0.05); }
+
+/* damage number */
+.dmg-num {
+  position: absolute;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--red);
+  pointer-events: none;
+  text-shadow: 1px 1px 0 var(--paper);
+  animation: dmg-rise 0.8s ease-out forwards;
+}
+@keyframes dmg-rise {
+  0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+  20% { transform: translate(-50%, -100%) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -200%) scale(0.9); opacity: 0; }
+}
+
+/* main menu doodle title */
+.menu-title-doodle {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 140px;
+  line-height: 0.85;
+  text-align: center;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+/* card: roster */
+.def-card {
+  position: relative;
+  background: var(--paper);
+  border: 2.5px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.08s;
+}
+.def-card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.def-card.selected {
+  background: var(--yellow);
+}
+
+/* role color stripe */
+.role-stripe {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 8px;
+  background: var(--ink);
+}
+.role-stripe.melee { background: var(--red); }
+.role-stripe.ranged { background: var(--blue); }
+.role-stripe.cc { background: var(--purple); }
+.role-stripe.support { background: var(--yellow); }
+.role-stripe.special { background: var(--pink); }
+
+/* MAP CARD */
+.map-card {
+  position: relative;
+  width: 320px;
+  background: var(--paper);
+  border: 2.5px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 5px 5px 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.08s;
+  overflow: hidden;
+}
+.map-card:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--ink); }
+.map-card.locked { cursor: not-allowed; opacity: 0.7; }
+
+/* HUD */
+.hud {
+  position: absolute;
+  pointer-events: none;
+  z-index: 50;
+}
+.hud > * { pointer-events: auto; }
+
+/* tray of buyable defenders */
+.def-pill {
+  position: relative;
+  width: 88px;
+  background: var(--paper);
+  border: 2.5px solid var(--ink);
+  border-radius: 6px;
+  padding: 6px 4px 4px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+  user-select: none;
+  transition: transform 0.06s;
+}
+.def-pill:hover { transform: translateY(-2px); }
+.def-pill.selected {
+  background: var(--yellow);
+  box-shadow: 0 0 0 2px var(--ink);
+  transform: translateY(-2px);
+}
+.def-pill.cant-afford {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ribbons */
+.ribbon {
+  position: absolute;
+  top: 12px; right: -8px;
+  background: var(--red);
+  color: var(--paper);
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 16px;
+  padding: 2px 12px 0;
+  transform: rotate(8deg);
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+/* circular icon emblem */
+.emblem {
+  position: relative;
+  width: 56px; height: 56px;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+/* checkbox / toggle for settings */
+.set-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1.5px dashed var(--ink-faint);
+}
+
+.toggle {
+  width: 56px; height: 28px;
+  background: var(--paper-3);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  position: relative; cursor: pointer;
+  transition: background 0.15s;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  background: var(--ink);
+  border-radius: 50%;
+  top: 2px; left: 2px;
+  transition: left 0.15s;
+}
+.toggle.on { background: var(--grass); }
+.toggle.on::after { left: 30px; }
+
+/* scrollbar style for in-app scrollers */
+.scroll-area {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink-soft) transparent;
+}
+.scroll-area::-webkit-scrollbar { width: 8px; }
+.scroll-area::-webkit-scrollbar-thumb {
+  background: var(--ink-soft);
+  border-radius: 4px;
+}
+
+/* game over / victory overlays */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 18, 14, 0.55);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(3px);
+}
+
+/* speech bubble (for question askers etc) */
+.speech {
+  position: absolute;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  padding: 2px 8px 0;
+  font-family: var(--font-hand);
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 1px 1px 0 var(--ink);
+  white-space: nowrap;
+  transform: translate(-50%, -110%);
+}
+.speech::after {
+  content: '';
+  position: absolute;
+  bottom: -8px; left: 50%;
+  width: 10px; height: 10px;
+  background: var(--paper);
+  border-right: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  transform: translateX(-50%) rotate(45deg);
+}
