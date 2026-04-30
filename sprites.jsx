@@ -43,7 +43,13 @@ function ChibiBody({ bodyColor = '#E63946', hairColor = '#1A1A1A', accent, scale
 }
 
 // Defender sprite — slight bob animation
+const DEFENDER_IMAGES = {
+  coffee: 'assets/characters/coffee-tosser.png',
+  talker: 'assets/characters/talker.png',
+};
+
 function DefenderSprite({ def, x, y, firing = false, scale = 1 }) {
+  const imgSrc = DEFENDER_IMAGES[def.id];
   return (
     <div className="sprite" style={{ left: x, top: y, zIndex: Math.floor(y) }}>
       <div className="sprite-shadow" style={{ position: 'absolute', left: '50%', top: '100%', marginTop: -4 }} />
@@ -51,7 +57,24 @@ function DefenderSprite({ def, x, y, firing = false, scale = 1 }) {
         animation: 'wobble 2.4s ease-in-out infinite',
         transformOrigin: 'bottom center',
       }}>
-        <ChibiBody bodyColor={def.bodyColor} hairColor={def.hairColor} accent={def.accent} scale={scale} />
+        {imgSrc ? (
+          <img
+            src={imgSrc}
+            alt={def.name}
+            style={{
+              width: 56 * scale,
+              height: 72 * scale,
+              objectFit: 'contain',
+              objectPosition: 'bottom',
+              display: 'block',
+              pointerEvents: 'none',
+              userSelect: 'none',
+            }}
+            draggable={false}
+          />
+        ) : (
+          <ChibiBody bodyColor={def.bodyColor} hairColor={def.hairColor} accent={def.accent} scale={scale} />
+        )}
       </div>
     </div>
   );
@@ -137,10 +160,28 @@ function EnemySprite({ enemy, x, y, hpPct, slowed }) {
 
 // little flat icon for use in cards / buttons (no animation)
 function DefenderIcon({ def, size = 64 }) {
+  const imgSrc = DEFENDER_IMAGES[def.id];
   return (
     <div style={{ width: size, height: size * 1.3, position: 'relative' }}>
-      <ChibiBody bodyColor={def.bodyColor} hairColor={def.hairColor} accent={def.accent}
-        scale={size / 56} />
+      {imgSrc ? (
+        <img
+          src={imgSrc}
+          alt={def.name}
+          style={{
+            width: size,
+            height: size * 1.3,
+            objectFit: 'contain',
+            objectPosition: 'bottom',
+            display: 'block',
+            pointerEvents: 'none',
+            userSelect: 'none',
+          }}
+          draggable={false}
+        />
+      ) : (
+        <ChibiBody bodyColor={def.bodyColor} hairColor={def.hairColor} accent={def.accent}
+          scale={size / 56} />
+      )}
     </div>
   );
 }
