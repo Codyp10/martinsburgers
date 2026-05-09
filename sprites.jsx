@@ -44,8 +44,16 @@ function ChibiBody({ bodyColor = '#E63946', hairColor = '#1A1A1A', accent, scale
 
 // Defender sprite — slight bob animation
 const DEFENDER_IMAGES = {
+  greeter: 'assets/characters/greeter.png',
+  hypeman: 'assets/characters/hype-man.png',
+  handout: 'assets/characters/handout-giver.png',
   coffee: 'assets/characters/coffee-tosser.png',
   talker: 'assets/characters/talker.png',
+  usher: 'assets/characters/usher.png',
+  soundbooth: 'assets/characters/sound-booth-guy.png',
+  snackrunner: 'assets/characters/snack-runner.png',
+  organizer: 'assets/characters/organizer.png',
+  pk: 'assets/characters/pastors-kid.png',
 };
 
 function DefenderSprite({ def, x, y, firing = false, scale = 1 }) {
