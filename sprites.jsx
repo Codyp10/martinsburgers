@@ -70,8 +70,11 @@ function DefenderSprite({ def, x, y, firing = false, scale = 1 }) {
             src={imgSrc}
             alt={def.name}
             style={{
-              width: 56 * scale,
-              height: 72 * scale,
+              // PNGs include padding around the figure, so render the box
+              // ~1.7x bigger than the chibi/enemy SVG (56x72) to match their
+              // on-board visual size.
+              width: 96 * scale,
+              height: 124 * scale,
               objectFit: 'contain',
               objectPosition: 'bottom',
               display: 'block',
