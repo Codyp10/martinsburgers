@@ -91,11 +91,17 @@ function step(state, dtSec) {
     for (const sp of waveQueue) {
       if (t >= sp.at) {
         const ed = ENEMIES[sp.type];
+        const hpMult = sp.hpMult || 1;
+        const speedMult = sp.speedMult || 1;
+        const bountyMult = sp.bountyMult || 1;
+        const hp = Math.round(ed.hp * hpMult);
         enemies.push({
           id: nextId(),
           def: ed,
           dist: 0,
-          hp: ed.hp, hpMax: ed.hp,
+          hp, hpMax: hp,
+          speedMult,
+          bountyMult,
           slowUntil: 0, slowMult: 1,
           x: path[0].x, y: path[0].y,
           flash: 0,
@@ -111,7 +117,8 @@ function step(state, dtSec) {
   let lives = state.lives;
   enemies = enemies.map(e => {
     const slowMult = t < e.slowUntil ? e.slowMult : 1;
-    const newDist = e.dist + e.def.speed * slowMult * dt;
+    const speedMult = e.speedMult || 1;
+    const newDist = e.dist + e.def.speed * speedMult * slowMult * dt;
     const pos = pointAt(path, newDist);
     return { ...e, dist: newDist, x: pos.x, y: pos.y, flash: Math.max(0, e.flash - dt) };
   });
@@ -276,7 +283,7 @@ function step(state, dtSec) {
   const dead = enemies.filter(e => e.hp <= 0);
   enemies = enemies.filter(e => e.hp > 0);
   for (const d of dead) {
-    spirit += d.def.bounty;
+    spirit += Math.round(d.def.bounty * (d.bountyMult || 1));
     fx.push({ id: nextId(), kind: 'pop', x: d.x, y: d.y - 30, t: 0, life: 0.45 });
   }
 

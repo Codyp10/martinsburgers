@@ -324,6 +324,25 @@ const MAPS = [
     path: [],
     waves: 'standard',
   },
+  {
+    id: 'ludicrous',
+    name: 'Ludicrous Mode',
+    subtitle: '100 waves. how far can you get?',
+    difficulty: 5,
+    unlocked: true,
+    spirit: 350,
+    lives: 30,
+    color: '#E63946',
+    icon: 'lobby',
+    desc: 'One hundred waves of escalating chaos. Every wave hits harder than the last. Survival is unlikely. Glory is mandatory.',
+    path: [
+      { x: -40, y: 180 }, { x: 280, y: 180 }, { x: 280, y: 400 },
+      { x: 120, y: 400 }, { x: 120, y: 620 }, { x: 540, y: 620 },
+      { x: 540, y: 320 }, { x: 820, y: 320 }, { x: 820, y: 600 },
+      { x: 1080, y: 600 }, { x: 1080, y: 240 }, { x: 1320, y: 240 },
+    ],
+    waves: 'ludicrous',
+  },
 ];
 
 // wave packs — { delay (s before wave), spawns: [{type, count, gap (s)}] }
@@ -340,10 +359,79 @@ const WAVES_STANDARD = [
 const WAVES_SANCTUARY = WAVES_STANDARD; // reuse for now
 const WAVES_FELLOWSHIP = WAVES_STANDARD;
 
+// Ludicrous Mode — 100 waves of escalating chaos.
+// Each wave applies an HP/speed/bounty multiplier that grows with the wave
+// index, plus enemy mix and spawn density that ramp through five brackets.
+function generateLudicrousWaves() {
+  const waves = [];
+  for (let i = 0; i < 100; i++) {
+    const w = i + 1;                                  // wave number 1..100
+    const hpMult = +(1 + i * 0.07).toFixed(3);        // wave 100 -> ~7.9x HP
+    const speedMult = +(1 + i * 0.008).toFixed(3);    // wave 100 -> ~1.79x speed
+    const bountyMult = +(1 + i * 0.05).toFixed(3);    // economy keeps pace
+    const tag = { hpMult, speedMult, bountyMult };
+    const spawns = [];
+
+    if (w <= 10) {
+      // Bracket 1: warmup
+      spawns.push({ type: 'late', count: 5 + w, gap: 0.9, ...tag });
+      if (w >= 4) spawns.push({ type: 'vbs', count: 4 + w, gap: 0.55, ...tag });
+      if (w >= 7) spawns.push({ type: 'potluck', count: 3 + Math.floor(w / 2), gap: 0.95, ...tag });
+    } else if (w <= 25) {
+      // Bracket 2: full enemy roster, scaling counts
+      spawns.push({ type: 'late', count: 10 + Math.floor(w / 2), gap: 0.7, ...tag });
+      spawns.push({ type: 'potluck', count: 6 + Math.floor(w / 3), gap: 0.85, ...tag });
+      spawns.push({ type: 'vbs', count: 10 + Math.floor(w / 2), gap: 0.45, ...tag });
+      if (w % 4 === 0) spawns.push({ type: 'asker', count: 4 + Math.floor(w / 6), gap: 1.1, ...tag });
+      if (w === 25) spawns.push({ type: 'boss', count: 1, gap: 0, ...tag });
+    } else if (w <= 50) {
+      // Bracket 3: bosses become recurring
+      spawns.push({ type: 'late', count: 14, gap: 0.6, ...tag });
+      spawns.push({ type: 'potluck', count: 12, gap: 0.7, ...tag });
+      spawns.push({ type: 'asker', count: 7, gap: 1.0, ...tag });
+      spawns.push({ type: 'vbs', count: 16, gap: 0.4, ...tag });
+      if (w % 10 === 0) spawns.push({ type: 'boss', count: 1, gap: 0, ...tag });
+    } else if (w <= 75) {
+      // Bracket 4: heavy pressure, frequent bosses
+      spawns.push({ type: 'late', count: 18, gap: 0.5, ...tag });
+      spawns.push({ type: 'potluck', count: 15, gap: 0.6, ...tag });
+      spawns.push({ type: 'asker', count: 11, gap: 0.85, ...tag });
+      spawns.push({ type: 'vbs', count: 22, gap: 0.35, ...tag });
+      if (w % 5 === 0) spawns.push({ type: 'boss', count: 1, gap: 0, ...tag });
+    } else {
+      // Bracket 5: endgame chaos
+      const extra = w - 75; // 1..25
+      spawns.push({ type: 'late', count: 22 + extra, gap: 0.4, ...tag });
+      spawns.push({ type: 'potluck', count: 18 + Math.floor(extra / 2), gap: 0.5, ...tag });
+      spawns.push({ type: 'asker', count: 14 + Math.floor(extra / 2), gap: 0.75, ...tag });
+      spawns.push({ type: 'vbs', count: 26 + extra, gap: 0.3, ...tag });
+      // Boss caravans — 1 boss at w76, scaling up to 4 by w100
+      const bossCount = 1 + Math.floor(extra / 7);
+      const bossTag = { hpMult: hpMult * 1.4, speedMult, bountyMult: bountyMult * 1.4 };
+      spawns.push({ type: 'boss', count: bossCount, gap: 2.0, ...bossTag });
+    }
+
+    // Wave naming
+    let name;
+    if (w === 100) name = '🏆 THE FINAL HOUR';
+    else if (w === 50) name = '⚡ HALFWAY MARK';
+    else if (w === 75) name = '🔥 The Final Quarter';
+    else if (w === 25) name = '💀 First Boss';
+    else if (w % 10 === 0) name = `Wave ${w} — Big One`;
+    else name = `Wave ${w}`;
+
+    waves.push({ name, spawns });
+  }
+  return waves;
+}
+
+const WAVES_LUDICROUS = generateLudicrousWaves();
+
 const WAVE_PACKS = {
   standard: WAVES_STANDARD,
   sanctuary: WAVES_SANCTUARY,
   fellowship: WAVES_FELLOWSHIP,
+  ludicrous: WAVES_LUDICROUS,
 };
 
 Object.assign(window, { DEFENDERS, ENEMIES, MAPS, WAVE_PACKS });
