@@ -451,6 +451,44 @@ function GameScreen({ map, onMenu, onWin, onLose, defaultSpeed, hardMode, cardLa
         if (f.kind === 'muzzle') {
           return <div key={f.id} className="muzzle-flash" style={{ left: f.x, top: f.y, zIndex: 900 }} />;
         }
+        if (f.kind === 'handshake') {
+          // 🤝 emoji travels from Greeter to target, with a small shake on arrival
+          const p = Math.min(1, f.t / f.life);
+          const x = f.sx + (f.ex - f.sx) * p;
+          const y = f.sy + (f.ey - f.sy) * p - Math.sin(p * Math.PI) * 12; // gentle arc
+          // shake increases as it approaches the target ("vigorous" handshake)
+          const shake = p > 0.6 ? Math.sin(p * 80) * 4 : 0;
+          const scale = 1 + Math.sin(p * Math.PI) * 0.4;
+          const opacity = p < 0.85 ? 1 : (1 - p) / 0.15;
+          return (
+            <div key={f.id} style={{
+              position: 'absolute', left: x + shake, top: y,
+              fontSize: 26,
+              transform: `translate(-50%, -50%) scale(${scale}) rotate(${shake * 4}deg)`,
+              opacity,
+              filter: 'drop-shadow(0 2px 0 rgba(0,0,0,0.25))',
+              pointerEvents: 'none', zIndex: 1100,
+            }}>🤝</div>
+          );
+        }
+        if (f.kind === 'highfive') {
+          // 🙌 emoji that travels from defender to target and pops on impact
+          const p = Math.min(1, f.t / f.life);
+          const x = f.sx + (f.ex - f.sx) * p;
+          const y = f.sy + (f.ey - f.sy) * p - Math.sin(p * Math.PI) * 16; // gentle arc
+          const scale = 1 + Math.sin(p * Math.PI) * 0.6;
+          const opacity = p < 0.85 ? 1 : (1 - p) / 0.15;
+          return (
+            <div key={f.id} style={{
+              position: 'absolute', left: x, top: y,
+              fontSize: 26,
+              transform: `translate(-50%, -50%) scale(${scale}) rotate(${(p - 0.5) * 30}deg)`,
+              opacity,
+              filter: 'drop-shadow(0 2px 0 rgba(0,0,0,0.25))',
+              pointerEvents: 'none', zIndex: 1100,
+            }}>🙌</div>
+          );
+        }
         if (f.kind === 'splash') {
           const a = Math.max(0, 1 - f.t / f.life);
           return <div key={f.id} style={{

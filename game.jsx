@@ -166,7 +166,11 @@ function step(state, dtSec) {
     }
     if (!best) continue;
     d.lastFireAt = t;
-    pendingFlashes.push({ id: nextId(), kind: 'muzzle', x: d.x, y: d.y - 30, t: 0, life: 0.3 });
+    // Melee characters with their own animations skip the muzzle flash.
+    const hasCustomMeleeFx = d.def.id === 'hypeman' || d.def.id === 'greeter';
+    if (!hasCustomMeleeFx) {
+      pendingFlashes.push({ id: nextId(), kind: 'muzzle', x: d.x, y: d.y - 80, t: 0, life: 0.3 });
+    }
 
     // if melee (range <= 100) — instant damage
     if (d.def.range <= 100 && d.def.damage > 0) {
@@ -176,6 +180,22 @@ function step(state, dtSec) {
         target.flash = 0.15;
         if (d.def.id === 'greeter') {
           target.slowUntil = t + 0.2; target.slowMult = 0;
+          // 🤝 handshake travels from Greeter's hand to the target
+          pendingFlashes.push({
+            id: nextId(), kind: 'handshake',
+            sx: d.x, sy: d.y - 80,
+            ex: target.x, ey: target.y - 30,
+            t: 0, life: 0.25,
+          });
+        }
+        if (d.def.id === 'hypeman') {
+          // 🙌 high-five flies from Hype-Man's hand level to the target
+          pendingFlashes.push({
+            id: nextId(), kind: 'highfive',
+            sx: d.x, sy: d.y - 80,
+            ex: target.x, ey: target.y - 30,
+            t: 0, life: 0.22,
+          });
         }
       }
     } else if (d.def.id === 'talker') {
@@ -190,7 +210,7 @@ function step(state, dtSec) {
       // ranged — projectile
       projectiles.push({
         id: nextId(),
-        x: d.x, y: d.y - 30,
+        x: d.x, y: d.y - 80,
         targetId: best.id,
         dmg: d.def.damage * d.damageMult,
         splash: d.def.splash || 0,
