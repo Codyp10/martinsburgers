@@ -168,14 +168,14 @@ function step(state, dtSec) {
     d.lastFireAt = t;
     pendingFlashes.push({ id: nextId(), kind: 'muzzle', x: d.x, y: d.y - 30, t: 0, life: 0.3 });
 
-    // if melee (range <= 80) — instant damage
-    if (d.def.range <= 80 && d.def.damage > 0) {
+    // if melee (range <= 100) — instant damage
+    if (d.def.range <= 100 && d.def.damage > 0) {
       const target = enemies.find(e => e.id === best.id);
       if (target) {
         target.hp -= d.def.damage * d.damageMult;
         target.flash = 0.15;
         if (d.def.id === 'greeter') {
-          target.slowUntil = t + 0.4; target.slowMult = 0;
+          target.slowUntil = t + 0.2; target.slowMult = 0;
         }
       }
     } else if (d.def.id === 'talker') {
@@ -263,7 +263,7 @@ function step(state, dtSec) {
   // 6. wave end?
   if (waveActive && waveQueue.length === 0 && enemies.length === 0) {
     waveActive = false;
-    spirit += 50; // wave bonus
+    spirit += 30; // wave bonus
   }
 
   // 7. win/loss
